@@ -2,11 +2,19 @@ import express from "express";
 import cors from "cors";
 import { getMedia } from "./controllers/media";
 import mediaRouter from "./routes/media";
+import path from "path";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+  })
+);
 app.use(express.json());
+
+// Serve static files from the 'uploads' directory
+app.use("/api/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use("/api", mediaRouter);
 

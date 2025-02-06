@@ -1,10 +1,23 @@
-const express = require("express");
+import express from "express";
 import { Request, Response } from "express";
 import { getMediaById } from "../controllers/media";
 import { generateResponse } from "../utils/helper";
 import { getMedia } from "../controllers/media";
+import { addMedia } from "../controllers/media";
+import multer from "multer";
+import path from "path";
 
 const mediaRouter = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads"); // Specify the destination directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // Specify the file name
+  },
+});
+const upload = multer({ storage: storage });
 
 //Write method to get all media
 mediaRouter.get("/media", async (req: Request, res: Response) => {
@@ -21,5 +34,25 @@ mediaRouter.get("/media/:mediaid", async (req: Request, res: Response) => {
     generateResponse(res, 200, "Media found", media);
   }
 });
+
+//write method to add media
+mediaRouter.post("/media", async (req: Request, res: Response) => {
+  const media = req.body;
+  const inseretedMedia = (await addMedia(media)) || {};
+  generateResponse(res, 200, "Media added successfully", inseretedMedia);
+});
+
+//Write method to upload media
+mediaRouter.post(
+  "/media/thumbnail",
+  upload.single("thumbnail"),
+  (req: Request, res: Response) => {
+    if (!req.file) {
+      generateResponse(res, 400, "No file uploaded");
+    } else {
+      generateResponse(res, 200, "Media uploaded successfully", req.file);
+    }
+  }
+);
 
 export default mediaRouter;

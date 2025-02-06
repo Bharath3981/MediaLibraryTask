@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/client"
 }
 
 datasource db {
@@ -15,15 +8,14 @@ datasource db {
 }
 
 model MediaLibraries {
-  id            Int      @id @default(autoincrement())
-  title         String   @unique
-  description   String?
-  tags          Json
-  cutomProps    Json
-  thumbnail     String  @default("https://via.placeholder.com/150")
-  status        String
-  publishDate   DateTime
-  createdAt     DateTime @default(now())
-  updated       DateTime @default(now())
+  id          Int       @id @default(autoincrement())
+  title       String    @unique
+  description String?
+  tags        Json      @default("[]")
+  customProps Json      @default("{}")
+  thumbnail   String    @default("https://via.placeholder.com/150")
+  status      String
+  publishDate DateTime? @default(now())
+  createdAt   DateTime? @default(now())
+  updated     DateTime? @default(now())
 }
-

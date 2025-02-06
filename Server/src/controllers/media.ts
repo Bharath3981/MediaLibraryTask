@@ -18,3 +18,16 @@ export const getMediaById = async (id: any) => {
     return null;
   }
 };
+
+//Write method to add media
+export const addMedia = async (media: any) => {
+  try {
+    console.log(media);
+    return await prisma.mediaLibraries.create({
+      data: media,
+    });
+  } catch (error) {
+    console.error("Error adding media:", error);
+    return null;
+  }
+};
