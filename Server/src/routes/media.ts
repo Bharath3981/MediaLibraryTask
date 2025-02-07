@@ -6,6 +6,7 @@ import { getMedia } from "../controllers/media";
 import { addMedia } from "../controllers/media";
 import multer from "multer";
 import path from "path";
+import { updateMedia } from "../controllers/media";
 
 const mediaRouter = express.Router();
 
@@ -38,8 +39,22 @@ mediaRouter.get("/media/:mediaid", async (req: Request, res: Response) => {
 //write method to add media
 mediaRouter.post("/media", async (req: Request, res: Response) => {
   const media = req.body;
+  media.tags = media.tags.split(",").map((tag: string) => tag.trim());
   const inseretedMedia = (await addMedia(media)) || {};
   generateResponse(res, 200, "Media added successfully", inseretedMedia);
+});
+
+//write method to update media
+mediaRouter.put("/media/:mediaid", async (req: Request, res: Response) => {
+  const { mediaid } = req.params;
+  const media = req.body;
+  media.tags = media.tags.split(",").map((tag: string) => tag.trim());
+  const updatedMedia = await updateMedia(mediaid, media);
+  if (!updatedMedia) {
+    generateResponse(res, 404, "Media not found");
+  } else {
+    generateResponse(res, 200, "Media updated successfully", updatedMedia);
+  }
 });
 
 //Write method to upload media

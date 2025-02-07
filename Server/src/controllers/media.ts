@@ -31,3 +31,18 @@ export const addMedia = async (media: any) => {
     return null;
   }
 };
+
+//Write method to update media
+export const updateMedia = async (id: any, media: any) => {
+  try {
+    return await prisma.mediaLibraries.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: media,
+    });
+  } catch (error) {
+    console.error("Error updating media:", error);
+    return null;
+  }
+};

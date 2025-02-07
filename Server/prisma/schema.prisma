@@ -9,7 +9,7 @@ datasource db {
 
 model MediaLibraries {
   id          Int       @id @default(autoincrement())
-  title       String    @unique
+  title       String
   description String?
   tags        Json      @default("[]")
   customProps Json      @default("{}")
