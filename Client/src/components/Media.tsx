@@ -43,7 +43,7 @@ const Media = () => {
     setSelectedTag(tag);
     if (tag !== "All") {
       const response = await filterMediaByTag(tag);
-      //setMedia(response.data);
+      setMedia(response.data);
       dispatch(addMedia(response.data));
     } else {
       fetchMedia();
