@@ -6,11 +6,13 @@ import { addMedia } from "../helpers/slices/mediaSlice";
 import { useSelector } from "react-redux";
 import { GrView } from "react-icons/gr";
 import { Link } from "react-router-dom";
+import { filterMediaByTag } from "../helpers/restHelper";
 
 const Media = () => {
   const [media, setMedia] = React.useState([]);
   const dispatch = useDispatch();
   const medias = useSelector((state: any) => state.media);
+  const [selectedTag, setSelectedTag] = React.useState("Holiness");
   const fetchMedia = async () => {
     const response = await getMedia();
     console.log(response);
@@ -21,18 +23,65 @@ const Media = () => {
     fetchMedia();
   }, []);
 
-  if (!medias) return;
-  if (medias.length === 0) return <div>No media found</div>;
+  const onFilterChange = (filter: string) => {
+    let filteredMedia = [];
+    filteredMedia = filterMedia(media, filter);
+    dispatch(addMedia(filteredMedia));
+  };
+
+  //write method to implement filter on media
+  const filterMedia = (media: any, filter: string) => {
+    return media.filter((item: any) => {
+      return (
+        item.title.toLowerCase().includes(filter.toLowerCase()) ||
+        item.status.toLowerCase().includes(filter.toLowerCase())
+      );
+    });
+  };
+
+  const setTag = async (tag: string) => {
+    setSelectedTag(tag);
+    if (tag !== "All") {
+      const response = await filterMediaByTag(tag);
+      //setMedia(response.data);
+      dispatch(addMedia(response.data));
+    } else {
+      fetchMedia();
+    }
+    // if (tag === "All") {
+    //   dispatch(addMedia(media));
+    // } else {
+    //   const filteredMedia = media.filter((item: any) => {
+    //     return item.tags.toString().includes(tag);
+    //   });
+    //   dispatch(addMedia(filteredMedia));
+    // }
+  };
+
+  if (!media) return;
   return (
     <div>
       <div className="flex mb-3 justify-between">
-        <div>
-          <select className="select select-bordered w-full max-w-xs">
-            <option>All</option>
-            <option>Who shot first?</option>
-            <option>Han Solo</option>
-            <option>Greedo</option>
+        <div className="flex gap-3">
+          <select
+            value={selectedTag}
+            onChange={(e) => setTag(e.target.value)}
+            className="select select-bordered w-full max-w-xs"
+          >
+            <option value="All">All</option>
+            <option>Holiness</option>
+            <option>Spirit</option>
+            <option>Devil</option>
+            <option>Jesus</option>
+            <option>Lies</option>
+            <option>joy</option>
           </select>
+          <input
+            type="text"
+            onChange={(e) => onFilterChange(e.target.value)}
+            placeholder="Search media by title or status"
+            className="input input-bordered w-full max-w-xs"
+          />
         </div>
         <div>
           <button

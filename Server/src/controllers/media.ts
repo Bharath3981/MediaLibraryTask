@@ -46,3 +46,19 @@ export const updateMedia = async (id: any, media: any) => {
     return null;
   }
 };
+
+//Write method to filter media by tag
+export const getMediaByTag = async (tag: any) => {
+  try {
+    return await prisma.mediaLibraries.findMany({
+      where: {
+        tags: {
+          has: tag,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching media by tag:", error);
+    return null;
+  }
+};

@@ -36,7 +36,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
     isExistingMedia ? "" : existingMedia.status
   );
   const selectedThumbnail = useRef<File | null>(null);
-  const thumbnail = "";
+  const thumbnail = existingMedia?.thumbnail ? existingMedia.thumbnail : "";
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
@@ -223,7 +223,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
                 onChange={(e) => setStatus(e.target.value)}
                 className="select select-sm select-bordered w-full max-w-xs"
               >
-                <option>Seheduled</option>
+                <option>Scheduled</option>
                 <option>Ready</option>
                 <option>Error</option>
               </select>

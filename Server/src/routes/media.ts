@@ -7,6 +7,7 @@ import { addMedia } from "../controllers/media";
 import multer from "multer";
 import path from "path";
 import { updateMedia } from "../controllers/media";
+import { getMediaByTag } from "../controllers/media";
 
 const mediaRouter = express.Router();
 
@@ -48,12 +49,28 @@ mediaRouter.post("/media", async (req: Request, res: Response) => {
 mediaRouter.put("/media/:mediaid", async (req: Request, res: Response) => {
   const { mediaid } = req.params;
   const media = req.body;
-  media.tags = media.tags.split(",").map((tag: string) => tag.trim());
+  console.log(media);
+  if (!Array.isArray(media.tags)) {
+    const tags = media.tags.split(",").map((tag: string) => tag.trim());
+    media.tags = tags;
+  }
+
   const updatedMedia = await updateMedia(mediaid, media);
   if (!updatedMedia) {
     generateResponse(res, 404, "Media not found");
   } else {
     generateResponse(res, 200, "Media updated successfully", updatedMedia);
+  }
+});
+
+//write method to filter media by tag
+mediaRouter.get("/media/tag/:tag", async (req: Request, res: Response) => {
+  const { tag } = req.params;
+  const media = await getMediaByTag(tag);
+  if (!media) {
+    generateResponse(res, 404, "Media not found");
+  } else {
+    generateResponse(res, 200, "Media found", media);
   }
 });
 
