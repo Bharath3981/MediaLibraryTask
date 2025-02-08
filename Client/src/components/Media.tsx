@@ -9,12 +9,14 @@ import { filterMediaByTag } from "../helpers/restHelper";
 import { useNavigate } from "react-router-dom";
 import { allTags } from "../helpers/constants";
 import { MultiSelect } from "react-multi-select-component";
+import { filterMediaByQuery } from "../helpers/restHelper";
 
 const Media = () => {
   const [media, setMedia] = React.useState([]);
   const dispatch = useDispatch();
   const medias = useSelector((state: any) => state.media);
   const [selectedTag, setSelectedTag] = React.useState([]);
+  const [titleQuery, setTitleQuery] = React.useState("");
   const multiSelectTags = allTags.map((tag) => {
     return { label: tag.name, value: tag.name };
   });
@@ -29,39 +31,58 @@ const Media = () => {
     fetchMedia();
   }, []);
 
-  const onFilterChange = (filter: string) => {
-    let filteredMedia = [];
-    filteredMedia = filterMedia(media, filter);
-    dispatch(addMedia(filteredMedia));
-  };
+  // const onFilterChange = (filter: string) => {
+  //   let filteredMedia = [];
+  //   filteredMedia = filterMedia(media, filter);
+  //   dispatch(addMedia(filteredMedia));
+  // };
 
   //write method to implement filter on media
-  const filterMedia = (media: any, filter: string) => {
-    return media.filter((item: any) => {
-      return (
-        item.title.toLowerCase().includes(filter.toLowerCase()) ||
-        item.status.toLowerCase().includes(filter.toLowerCase())
-      );
-    });
-  };
+  // const filterMedia = (media: any, filter: string) => {
+  //   return media.filter((item: any) => {
+  //     return (
+  //       item.title.toLowerCase().includes(filter.toLowerCase()) ||
+  //       item.status.toLowerCase().includes(filter.toLowerCase())
+  //     );
+  //   });
+  // };
 
-  const setTag = async (tag: string) => {
-    setSelectedTag(tag);
-    if (tag !== "All") {
-      const response = await filterMediaByTag(tag);
-      setMedia(response.data);
-      dispatch(addMedia(response.data));
-    } else {
-      fetchMedia();
+  // const setTag = async (tag: string) => {
+  //   setSelectedTag(tag);
+  //   if (tag !== "All") {
+  //     const response = await filterMediaByTag(tag);
+  //     setMedia(response.data);
+  //     dispatch(addMedia(response.data));
+  //   } else {
+  //     fetchMedia();
+  //   }
+  //   if (tag === "All") {
+  //     dispatch(addMedia(media));
+  //   } else {
+  //     const filteredMedia = media.filter((item: any) => {
+  //       return item.tags.toString().includes(tag);
+  //     });
+  //     dispatch(addMedia(filteredMedia));
+  //   }
+  // };
+
+  //Implement method to prepare rest query params for filter
+  const applyFilter = async () => {
+    let query = "";
+    console.log(selectedTag);
+    const parsedTags = selectedTag.map(
+      (tag: { label: string; value: string }) => tag.value
+    );
+    if (titleQuery) {
+      query = `title=${titleQuery}`;
     }
-    // if (tag === "All") {
-    //   dispatch(addMedia(media));
-    // } else {
-    //   const filteredMedia = media.filter((item: any) => {
-    //     return item.tags.toString().includes(tag);
-    //   });
-    //   dispatch(addMedia(filteredMedia));
-    // }
+    if (parsedTags.length > 0) {
+      query = query
+        ? `${query}&tags=${parsedTags.toString()}`
+        : `tags=${parsedTags.toString()}`;
+    }
+    const response = await filterMediaByQuery(query);
+    console.log(response);
   };
 
   if (!media) return;
@@ -82,7 +103,7 @@ const Media = () => {
             ))}
           </select> */}
           <MultiSelect
-            className="w-full max-w-xs h-30"
+            className="w-80 h-30"
             options={multiSelectTags}
             value={selectedTag}
             onChange={setSelectedTag}
@@ -90,10 +111,14 @@ const Media = () => {
           />
           <input
             type="text"
-            onChange={(e) => onFilterChange(e.target.value)}
-            placeholder="Search media by title or status"
+            value={titleQuery}
+            onChange={(e) => setTitleQuery(e.target.value)}
+            placeholder="Search media by title"
             className="input input-bordered w-full max-w-xs"
           />
+          <button className="btn btn-neutral" onClick={() => applyFilter()}>
+            Filter
+          </button>
         </div>
         <div>
           <button

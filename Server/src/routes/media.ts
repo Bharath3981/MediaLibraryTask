@@ -7,7 +7,8 @@ import { addMedia } from "../controllers/media";
 import multer from "multer";
 import path from "path";
 import { updateMedia } from "../controllers/media";
-import { getMediaByTag } from "../controllers/media";
+import { getMediaByTag, getMediaByQuery } from "../controllers/media";
+import { prepareWhereClause } from "../utils/helper";
 
 const mediaRouter = express.Router();
 
@@ -25,6 +26,18 @@ const upload = multer({ storage: storage });
 mediaRouter.get("/media", async (req: Request, res: Response) => {
   const midias = await getMedia();
   generateResponse(res, 200, "All media fetched successfully", midias);
+});
+
+//Write method to get all media
+mediaRouter.get("/media/filter", async (req: Request, res: Response) => {
+  const params = req.query;
+  const whereClause = prepareWhereClause(params);
+  console.log(whereClause);
+  // const tagsArr = String(tags)
+  //   .split(",")
+  //   .map((tag: string) => tag.trim());
+  const medias = (await getMediaByQuery(whereClause)) || [];
+  generateResponse(res, 200, "All media fetched successfully", medias);
 });
 
 mediaRouter.get("/media/:mediaid", async (req: Request, res: Response) => {

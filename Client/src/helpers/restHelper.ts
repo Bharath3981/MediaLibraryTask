@@ -29,13 +29,17 @@ export const addMedia = async (media: Media): Promise<AddMediaResponse> => {
   return response.json();
 };
 
-//Implement method to file media by tag
 export const filterMediaByTag = async (tag: string) => {
   const response = await fetch(`${BASE_URL}/media/tag/${tag}`);
   return response.json();
 };
 
-//Implement method to update media
+//IMplement rest method to handle filter with query params on media
+export const filterMediaByQuery = async (query: string) => {
+  const response = await fetch(`${BASE_URL}/media/filter?${query}`);
+  return response.json();
+};
+
 export const updateMedia = async (
   id: string,
   media: Media

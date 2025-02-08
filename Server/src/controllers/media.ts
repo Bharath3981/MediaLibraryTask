@@ -53,12 +53,24 @@ export const getMediaByTag = async (tag: any) => {
     return await prisma.mediaLibraries.findMany({
       where: {
         tags: {
-          has: tag,
+          hasSome: tag,
         },
       },
     });
   } catch (error) {
     console.error("Error fetching media by tag:", error);
+    return null;
+  }
+};
+
+//Implement method to filter media by query
+export const getMediaByQuery = async (whereClause: any) => {
+  try {
+    return await prisma.mediaLibraries.findMany({
+      where: whereClause,
+    });
+  } catch (error) {
+    console.error("Error fetching media by query:", error);
     return null;
   }
 };
