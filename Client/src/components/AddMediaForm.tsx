@@ -5,36 +5,25 @@ import { pushMedia, updatedMediaById } from "../helpers/slices/mediaSlice";
 import { useDispatch } from "react-redux";
 
 interface AddMediaFormProps {
-  existingMedia?: any; // Replace 'any' with the appropriate type if known
+  existingMedia: any; // Replace 'any' with the appropriate type if known
+  isNew: boolean;
 }
 
-//Implement method to convert to object to string
-const convertObjectToString = (obj: { [key: string]: string }) => {
-  let str = "";
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const element = obj[key];
-      str += `${key}:${element},`;
-    }
-  }
-  return str;
-};
-
-const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
-  const isExistingMedia = existingMedia?.id ? false : true;
-  const [title, setTitle] = useState(
-    isExistingMedia ? "" : existingMedia.title
-  );
-  const [description, setDescription] = useState(
-    isExistingMedia ? "" : existingMedia.description
-  );
-  const [tags, setTags] = useState(isExistingMedia ? "" : existingMedia.tags);
+const AddMediaForm: React.FC<AddMediaFormProps> = ({
+  existingMedia,
+  isNew,
+}) => {
+  const isExistingMedia = !isNew;
+  console.log(existingMedia, isExistingMedia);
+  const [title, setTitle] = useState(existingMedia.title);
+  const [description, setDescription] = useState(existingMedia.description);
   const [customProps, setCustomProps] = useState(
-    isExistingMedia ? "" : convertObjectToString(existingMedia.customProps)
+    (existingMedia.customProps || {}) as any
   );
   const [status, setStatus] = useState(
     isExistingMedia ? "" : existingMedia.status
   );
+  const tags = existingMedia?.tags ? existingMedia.tags : [];
   const selectedThumbnail = useRef<File | null>(null);
   const thumbnail = existingMedia?.thumbnail ? existingMedia.thumbnail : "";
   const dispatch = useDispatch();
@@ -54,22 +43,22 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
         tags,
         thumbnail,
         status,
+        customProps,
       };
+      console.log(media);
       try {
-        console.log(existingMedia);
-        media.customProps = convertStringToObject(customProps);
         if (selectedThumbnail.current !== null) {
           const response = await uploadThumbnailFun();
           if (response.data.path) {
             media.thumbnail = response.data.path;
-            if (!isExistingMedia) {
+            if (isExistingMedia) {
               submitUpdateMedia(media);
             } else {
               submitMedia(media);
             }
           }
         } else {
-          if (!isExistingMedia) {
+          if (isExistingMedia) {
             submitUpdateMedia(media);
           } else {
             submitMedia(media);
@@ -94,7 +83,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
   const submitMedia = async (media: any) => {
     const submitResponse = await addMedia(media);
     if (submitResponse.data.id) {
-      dispatch(pushMedia(submitResponse.data));
+      dispatch(pushMedia(submitResponse));
       alert("Media added successfully");
     }
   };
@@ -102,7 +91,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
   const submitUpdateMedia = async (media: any) => {
     const submitResponse = await updateMedia(existingMedia.id, media);
     if (submitResponse.data.id) {
-      dispatch(updatedMediaById(submitResponse.data));
+      dispatch(updatedMediaById(submitResponse));
       alert("Media Updated successfully");
     }
   };
@@ -129,7 +118,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
   const resetForm = () => {
     setTitle("");
     setDescription("");
-    setTags("");
+    //setTags("");
     setCustomProps("");
     setStatus("");
   };
@@ -173,8 +162,8 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
               </div>
               <input
                 type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
+                value={`${tags.length} tags selected`}
+                readOnly={true}
                 placeholder="tag1, tag2, tag3"
                 className="input input-bordered w-full max-w-xs input-sm"
               />
@@ -188,7 +177,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({ existingMedia }) => {
               </div>
               <input
                 type="text"
-                value={customProps}
+                value={`${Object.keys(customProps).length} custom props added`}
                 onChange={(e) => setCustomProps(e.target.value)}
                 placeholder="Please enter in key:value format"
                 className="input input-bordered w-full max-w-xs input-sm"

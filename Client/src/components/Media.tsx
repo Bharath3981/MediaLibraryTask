@@ -1,18 +1,24 @@
 import React, { useEffect } from "react";
 import { BASE_URL, getMedia } from "../helpers/restHelper";
-import AddMediaForm from "./AddMediaForm";
 import { useDispatch } from "react-redux";
 import { addMedia } from "../helpers/slices/mediaSlice";
 import { useSelector } from "react-redux";
 import { GrView } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import { filterMediaByTag } from "../helpers/restHelper";
+import { useNavigate } from "react-router-dom";
+import { allTags } from "../helpers/constants";
+import { MultiSelect } from "react-multi-select-component";
 
 const Media = () => {
   const [media, setMedia] = React.useState([]);
   const dispatch = useDispatch();
   const medias = useSelector((state: any) => state.media);
-  const [selectedTag, setSelectedTag] = React.useState("Holiness");
+  const [selectedTag, setSelectedTag] = React.useState([]);
+  const multiSelectTags = allTags.map((tag) => {
+    return { label: tag.name, value: tag.name };
+  });
+  const navigate = useNavigate();
   const fetchMedia = async () => {
     const response = await getMedia();
     console.log(response);
@@ -62,20 +68,26 @@ const Media = () => {
   return (
     <div>
       <div className="flex mb-3 justify-between">
-        <div className="flex gap-3">
-          <select
+        <div className="flex gap-3 items-center">
+          {/* <select
             value={selectedTag}
             onChange={(e) => setTag(e.target.value)}
             className="select select-bordered w-full max-w-xs"
           >
             <option value="All">All</option>
-            <option>Holiness</option>
-            <option>Spirit</option>
-            <option>Devil</option>
-            <option>Jesus</option>
-            <option>Lies</option>
-            <option>joy</option>
-          </select>
+            {allTags.map((tag) => (
+              <option key={tag.id} value={tag.name}>
+                {tag.name}
+              </option>
+            ))}
+          </select> */}
+          <MultiSelect
+            className="w-full max-w-xs h-30"
+            options={multiSelectTags}
+            value={selectedTag}
+            onChange={setSelectedTag}
+            labelledBy="Select"
+          />
           <input
             type="text"
             onChange={(e) => onFilterChange(e.target.value)}
@@ -87,10 +99,19 @@ const Media = () => {
           <button
             className="btn"
             onClick={() => {
-              const modal = document.getElementById("my_modal_5");
-              if (modal) {
-                (modal as HTMLDialogElement).showModal();
-              }
+              navigate("/media/details", {
+                state: {
+                  media: {
+                    title: "",
+                    thumbnail: "",
+                    description: "",
+                    status: "",
+                    tags: [],
+                    customProps: {},
+                  },
+                  isNew: true,
+                },
+              });
             }}
           >
             Add Media
@@ -133,7 +154,10 @@ const Media = () => {
                 <td>{item.tags.toString()}</td>
                 <td>{new Date(item.publishDate).toLocaleDateString()}</td>
                 <td>
-                  <Link to="/media/details" state={{ media: item }}>
+                  <Link
+                    to="/media/details"
+                    state={{ media: item, isNew: false }}
+                  >
                     <GrView />
                   </Link>
                 </td>
@@ -142,19 +166,6 @@ const Media = () => {
           </tbody>
         </table>
       </div>
-      <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-          <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
-            </button>
-          </form>
-          <h3 className="font-bold text-lg">Add Media</h3>
-          <AddMediaForm />
-          <div className="modal-action"></div>
-        </div>
-      </dialog>
     </div>
   );
 };

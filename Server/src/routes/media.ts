@@ -40,7 +40,7 @@ mediaRouter.get("/media/:mediaid", async (req: Request, res: Response) => {
 //write method to add media
 mediaRouter.post("/media", async (req: Request, res: Response) => {
   const media = req.body;
-  media.tags = media.tags.split(",").map((tag: string) => tag.trim());
+  //media.tags = media.tags.split(",").map((tag: string) => tag.trim());
   const inseretedMedia = (await addMedia(media)) || {};
   generateResponse(res, 200, "Media added successfully", inseretedMedia);
 });
@@ -50,10 +50,10 @@ mediaRouter.put("/media/:mediaid", async (req: Request, res: Response) => {
   const { mediaid } = req.params;
   const media = req.body;
   console.log(media);
-  if (!Array.isArray(media.tags)) {
-    const tags = media.tags.split(",").map((tag: string) => tag.trim());
-    media.tags = tags;
-  }
+  // if (!Array.isArray(media.tags)) {
+  //   const tags = media.tags.split(",").map((tag: string) => tag.trim());
+  //   media.tags = tags;
+  // }
 
   const updatedMedia = await updateMedia(mediaid, media);
   if (!updatedMedia) {
