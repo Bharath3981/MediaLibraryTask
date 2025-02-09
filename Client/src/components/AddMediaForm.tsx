@@ -3,6 +3,7 @@ import { uploadThumbnail } from "../helpers/restHelper";
 import { addMedia, updateMedia } from "../helpers/restHelper";
 import { pushMedia, updatedMediaById } from "../helpers/slices/mediaSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 interface AddMediaFormProps {
   existingMedia: any; // Replace 'any' with the appropriate type if known
@@ -25,6 +26,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
   const selectedThumbnail = useRef<File | null>(null);
   const thumbnail = existingMedia?.thumbnail ? existingMedia.thumbnail : "";
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
@@ -82,6 +84,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
     const submitResponse: any = await addMedia(media);
     if (submitResponse.data.id) {
       dispatch(pushMedia(submitResponse));
+      navigate("/media");
       alert("Media added successfully");
     }
   };
@@ -90,6 +93,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
     const submitResponse: any = await updateMedia(existingMedia.id, media);
     if (submitResponse.data.id) {
       dispatch(updatedMediaById(submitResponse));
+      navigate("/media");
       alert("Media Updated successfully");
     }
   };
