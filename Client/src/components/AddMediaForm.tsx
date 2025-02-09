@@ -20,9 +20,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
   const [customProps, setCustomProps] = useState(
     (existingMedia.customProps || {}) as any
   );
-  const [status, setStatus] = useState(
-    isExistingMedia ? "" : existingMedia.status
-  );
+  const [status, setStatus] = useState(existingMedia.status || "Scheduled");
   const tags = existingMedia?.tags ? existingMedia.tags : [];
   const selectedThumbnail = useRef<File | null>(null);
   const thumbnail = existingMedia?.thumbnail ? existingMedia.thumbnail : "";
