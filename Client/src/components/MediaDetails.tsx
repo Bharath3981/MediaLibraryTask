@@ -6,25 +6,19 @@ import CustomProps from "./CustomProps";
 
 const MediaDetails = () => {
   const location = useLocation();
-  const media = location.state.media || {};
+  const [media, setMedia] = useState(location.state.media || {});
   const isNew = location.state.isNew;
-  console.log(location.state.media);
-  const [existingMedia, setExistingMedia] = useState(media);
 
   const callbackSelectedTags = (tags: string[]) => {
+    console.log(tags);
     const tempMedia = { ...media };
     tempMedia.tags = tags;
-    console.log(tempMedia);
-    setExistingMedia(tempMedia);
+    setMedia(tempMedia);
   };
 
   interface Media {
     tags?: string[];
     customProps?: { [key: string]: any };
-  }
-
-  interface LocationState {
-    media: Media;
   }
 
   const callbackSelectedProps = (
@@ -50,7 +44,7 @@ const MediaDetails = () => {
         delete tempMedia.customProps[key];
       }
     }
-    setExistingMedia(tempMedia);
+    setMedia(tempMedia);
   };
   return (
     <div>
@@ -59,7 +53,7 @@ const MediaDetails = () => {
           <div className="card-body">
             <h2 className="card-title">Media Details</h2>
 
-            <AddMediaForm existingMedia={existingMedia || {}} isNew={isNew} />
+            <AddMediaForm existingMedia={media || {}} isNew={isNew} />
           </div>
         </div>
 
@@ -67,11 +61,11 @@ const MediaDetails = () => {
           <div className="card-body">
             <h2 className="card-title">Tags & Custom Props</h2>
             <Tags
-              selectedTags={existingMedia.tags || []}
+              selectedTags={media.tags || []}
               callbackSelectedTags={callbackSelectedTags}
             ></Tags>
             <CustomProps
-              selectedProps={existingMedia.customProps || {}}
+              selectedProps={media.customProps || {}}
               callbackSelectedProps={callbackSelectedProps}
             />
           </div>

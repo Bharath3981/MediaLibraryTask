@@ -5,7 +5,6 @@ import { addMedia } from "../helpers/slices/mediaSlice";
 import { useSelector } from "react-redux";
 import { GrView } from "react-icons/gr";
 import { Link } from "react-router-dom";
-import { filterMediaByTag } from "../helpers/restHelper";
 import { useNavigate } from "react-router-dom";
 import { allTags } from "../helpers/constants";
 import { MultiSelect } from "react-multi-select-component";
@@ -177,7 +176,7 @@ const Media = () => {
                   <div className="font-bold">{item.title}</div>
                 </td>
                 <td>{item.status}</td>
-                <td>{item.tags.toString()}</td>
+                <td>{item.tags && item.tags.toString()}</td>
                 <td>{new Date(item.publishDate).toLocaleDateString()}</td>
                 <td>
                   <Link

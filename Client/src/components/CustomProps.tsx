@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { MdDelete } from "react-icons/md";
-import { IoMdAddCircle } from "react-icons/io";
 
 interface CustomPropsType {
   selectedProps: any; // Replace 'any' with the appropriate type

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { allTags } from "../helpers/constants";
 
 interface TagsProps {

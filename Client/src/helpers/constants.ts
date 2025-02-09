@@ -61,7 +61,7 @@ export const allTags = [
   },
   {
     id: 13,
-    name: "Devil",
+    name: "Truth",
     selected: false,
   },
   {

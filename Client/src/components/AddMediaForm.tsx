@@ -31,7 +31,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
       const media: {
         title: string;
         description: string;
-        tags: string;
+        tags: any;
         thumbnail: string;
         status: string;
         customProps?: { [key: string]: string | boolean };
@@ -79,7 +79,7 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
   };
 
   const submitMedia = async (media: any) => {
-    const submitResponse = await addMedia(media);
+    const submitResponse: any = await addMedia(media);
     if (submitResponse.data.id) {
       dispatch(pushMedia(submitResponse));
       alert("Media added successfully");
@@ -87,26 +87,11 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
   };
 
   const submitUpdateMedia = async (media: any) => {
-    const submitResponse = await updateMedia(existingMedia.id, media);
+    const submitResponse: any = await updateMedia(existingMedia.id, media);
     if (submitResponse.data.id) {
       dispatch(updatedMediaById(submitResponse));
       alert("Media Updated successfully");
     }
-  };
-
-  //Wrtie method to convert string to object
-  const convertStringToObject = (str: string) => {
-    const obj: { [key: string]: string } = {};
-    const pairs = str.split(",");
-    pairs.forEach((pair) => {
-      let [key, value] = pair.split(":");
-      if (!key || !value) return;
-      key = key.trim();
-      value = value.trim();
-      obj[key] =
-        value == "true" || value == "false" ? JSON.parse(value) : value;
-    });
-    return obj;
   };
 
   const onThumbnailSelected = (file: File) => {
@@ -116,7 +101,6 @@ const AddMediaForm: React.FC<AddMediaFormProps> = ({
   const resetForm = () => {
     setTitle("");
     setDescription("");
-    //setTags("");
     setCustomProps("");
     setStatus("");
   };

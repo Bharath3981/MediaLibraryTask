@@ -4,7 +4,7 @@ const mediaSlice = createSlice({
   name: "media",
   initialState: [] as any[],
   reducers: {
-    addMedia: (state, action) => action.payload,
+    addMedia: (_, action) => action.payload,
     pushMedia: (state, action) => {
       if (state) {
         state.push(action.payload);

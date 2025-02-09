@@ -5,7 +5,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   baseUrl1 = "http://16.171.18.66/api";
 }
 
-export const baseUrl = baseUrl1;
+export const BASE_URL = baseUrl1;
 
 export const getMedia = async () => {
   const response = await fetch(`${BASE_URL}/media`);
