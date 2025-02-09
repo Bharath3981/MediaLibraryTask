@@ -14,9 +14,9 @@ app.use(
 app.use(express.json());
 
 // Serve static files from the 'uploads' directory
-app.use("/api/uploads", express.static(path.join(__dirname, "..", "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
-app.use("/api", mediaRouter);
+app.use("/", mediaRouter);
 
 const PORT = process.env.PORT || 3981;
 app.listen(PORT, () => {

@@ -1,6 +1,6 @@
 let baseUrl1 = "";
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-  baseUrl1 = "http://localhost:3981/api";
+  baseUrl1 = "http://localhost:3981";
 } else {
   baseUrl1 = "http://16.171.18.66/api";
 }
