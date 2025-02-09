@@ -18,7 +18,7 @@ app.use("/api/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use("/api", mediaRouter);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3981;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
