@@ -31,12 +31,12 @@ mediaRouter.get("/media", async (req: Request, res: Response) => {
 //Write method to get all media
 mediaRouter.get("/media/filter", async (req: Request, res: Response) => {
   const params = req.query;
+  let medias: any = [];
   const whereClause = prepareWhereClause(params);
-  console.log(whereClause);
   // const tagsArr = String(tags)
   //   .split(",")
   //   .map((tag: string) => tag.trim());
-  const medias = (await getMediaByQuery(whereClause)) || [];
+  medias = (await getMediaByQuery(whereClause)) || [];
   generateResponse(res, 200, "All media fetched successfully", medias);
 });
 

@@ -8,6 +8,27 @@ interface Response {
   json: (body: { message: string; data: ResponseData }) => void;
 }
 
+const preapreCustomProps = (customProps: any) => {
+  const customPropsWhereClauseAndArr: any = [];
+  const customPropsWhereClause: any = {
+    AND: [],
+  };
+  const customPropsArr = customProps
+    .split(",")
+    .map((prop: string) => prop.trim());
+  customPropsArr.forEach((prop: string) => {
+    const [key, value] = prop.split(":");
+    customPropsWhereClauseAndArr.push({
+      customProps: {
+        path: [key],
+        equals: value,
+      },
+    });
+  });
+  customPropsWhereClause.AND = customPropsWhereClauseAndArr;
+  return customPropsWhereClause;
+};
+
 export const prepareWhereClause = (queryObj: any) => {
   let whereClause: any = {};
   for (const key in queryObj) {
@@ -21,6 +42,9 @@ export const prepareWhereClause = (queryObj: any) => {
         whereClause[key] = {
           contains: queryObj[key],
         };
+      }
+      if (key === "customProps") {
+        whereClause["AND"] = preapreCustomProps(queryObj[key]).AND;
       }
     }
   }

@@ -82,6 +82,7 @@ const Media = () => {
         : `tags=${parsedTags.toString()}`;
     }
     const response = await filterMediaByQuery(query);
+    dispatch(addMedia(response.data));
     console.log(response);
   };
 
